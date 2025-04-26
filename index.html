@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Empresarial</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@latest/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="flex items-center justify-center h-screen">
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-20">
+            <img src="static/bot.jpg" alt="logo" class="w-25 h-20 mx-auto mb-9">
+            <h1 class="text-2xl font-bold text-center">¡Hola, soy tu asistente virtual!</h1>
+             <!-- Contenedor para mostrar el chat -->
+             <div id="chat" class="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-100 overflow-y-auto" style="max-height: 350px; height: 200px;"></div>
+                <!-- Mensajes del chat se agregarán aquí -->
+            <form method="POST" class="mt-4">
+                <input type="text" name="mensaje" id="userInput" placeholder="Escribe tu mensaje aquí" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+               <div class="flex justify-center mt-4">
+                <button  type="button" class="button" onclick="sendMessage(event)">Enviar</button>
+               </div>
+            </form>
+             </div>
+        </div>
+    </div>
+    <script>
+        function sendMessage(event) {
+            event.preventDefault();
+            let userInput = document.querySelector("#userInput").value;
+
+            // Validar que el usuario haya ingresado un mensaje
+            if (!userInput.trim()) {
+                alert("Por favor, escribe un mensaje.");
+                return;
+            }
+
+            // Enviar el mensaje al servidor
+            fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let chatbox = document.getElementById("chat");
+
+                // Mostrar el mensaje del usuario
+                chatbox.innerHTML += `<p><strong>Tú:</strong> ${userInput}</p>`;
+
+                // Mostrar la respuesta del chatbot
+                if (data.response) {
+                    chatbox.innerHTML += `<p><strong>Chatbot:</strong> ${data.response}</p>`;
+                } else if (data.error) {
+                    chatbox.innerHTML += `<p><strong>Error:</strong> ${data.error}</p>`;
+                }
+
+                // Limpiar el campo de entrada
+                document.querySelector("#userInput").value = "";
+
+                // Desplazar el chat hacia abajo automáticamente
+                chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch(error => {
+                console.error("Error en el chatbot:", error);
+                let chatbox = document.getElementById("chat");
+                chatbox.innerHTML += `<p><strong>Error:</strong> No se pudo conectar con el servidor.</p>`;
+            });
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+        }
+    </script>
+    <style>
+        body {
+            background-color: rgba(10, 1, 105, 0.8);
+        }
+       
+        button{
+            color: rgb(30, 26, 26);
+            padding: 5px 30px;
+            border: 1px solid rgb(61, 106, 255);
+            border-radius: 10px;
+            justify-content: center;
+            cursor: pointer;
+            text-transform: uppercase;
+            overflow: hidden;
+            box-shadow: 0 0 0 0 transparent;
+            -webkit-transition: all 0.2s ease-in;
+            -moz-transition: all 0.2s ease-in;
+            transition: all 0.2s ease-in;
+            font-size:10px;
+            }
+        button:hover {
+            background: rgb(61, 106, 255);
+            box-shadow: 0 0 30px 5px rgba(0, 142, 236, 0.815);
+            -webkit-transition: all 0.2s ease-out;
+            -moz-transition: all 0.2s ease-out;
+            transition: all 0.2s ease-out;
+          }
+          
+          button:hover::before {
+            -webkit-animation: sh02 0.5s 0s linear;
+            -moz-animation: sh02 0.5s 0s linear;
+            animation: sh02 0.5s 0s linear;
+          }
+          
+          button::before {
+            content: '';
+            display: block;
+            width: 0px;
+            height: 86%;
+            position: absolute;
+            top: 7%;
+            left: 0%;
+            opacity: 0;
+            background: #fff;
+            box-shadow: 0 0 50px 30px #fff;
+            -webkit-transform: skewX(-20deg);
+            -moz-transform: skewX(-20deg);
+            -ms-transform: skewX(-20deg);
+            -o-transform: skewX(-20deg);
+            transform: skewX(-20deg);
+          }
+          
+          @keyframes sh02 {
+            from {
+              opacity: 0;
+              left: 0%;
+            }
+          
+            50% {
+              opacity: 1;
+            }
+          
+            to {
+              opacity: 0;
+              left: 100%;
+            }
+          }
+          
+          button:active {
+            box-shadow: 0 0 0 0 transparent;
+            -webkit-transition: box-shadow 0.2s ease-in;
+            -moz-transition: box-shadow 0.2s ease-in;
+            transition: box-shadow 0.2s ease-in;
+          }
+          
+    </style>
+</body>
+</html>
