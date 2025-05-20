@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-
+import os
 app = Flask(__name__)
 
 # Ruta a template
@@ -12,10 +12,10 @@ def chat():
     user_input = request.json.get("message")  
     if not user_input:
         return jsonify({"error": "No se proporcionó un mensaje"}), 400
-
     # Respuestas
     responses = {
-    "bienvenido": "¡Bienvenido! ¿Cómo puedo asistirte hoy?",
+    "hola": "¡Bienvenido! ¿Cómo puedo asistirte hoy?",
+    "Buenas": "¡Bienvenido! ¿Cómo puedo asistirte hoy?",
     "horario": "Nuestro horario de atención es de lunes a viernes, de 9:00 a 18:00.",
     "ubicación": "Estamos ubicados en el centro de la ciudad. ¿Necesitas la dirección exacta?",
     "envío": "Realizamos envíos a todo el país. ¿Dónde te gustaría recibir tu pedido?",
@@ -33,5 +33,4 @@ def chat():
     return jsonify({"response": chatbot_response})
 
 if __name__ == '__main__':
-    app.run(debug=True)
      app.run(debug=True, host='0.0.0.0', port=5000)
